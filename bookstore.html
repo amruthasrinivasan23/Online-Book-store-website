@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WHITE PETAL ONLINE BOOKSTORE - Clean Layout + Payment Form</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 0; background: #f0f0f0; }
+  header, footer { background: #333; color: white; padding: 10px; text-align: center; }
+  nav { background: #444; padding: 8px; display: flex; justify-content: center; gap: 5px; }
+  nav button { padding: 6px 12px; background: #666; border: none; border-radius: 4px; color: white; cursor: pointer; font-size: 14px; }
+  .container { padding: 20px; max-width: 1000px; margin: auto; }
+  .book { background: white; padding: 10px; border-radius: 5px; width: 150px; text-align: center; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+  .book img { width: 100px; height: 150px; object-fit: cover; }
+  .books-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+  .subcat-buttons button { margin: 2px; padding: 6px 8px; background: #555; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 13px; }
+  .section { background: white; padding: 15px; border-radius: 5px; margin-top: 15px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+  button { cursor: pointer; }
+  input[type="text"], input[type="password"], input[type="number"] { padding: 8px; margin: 5px 0; width: 100%; border-radius: 4px; border: 1px solid #ccc; }
+  .store { padding: 5px; background: #eee; border-radius: 4px; margin-bottom: 5px; }
+  .login-container { display: flex; justify-content: center; align-items: center; height: 80vh; }
+  .login-box { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 300px; }
+  .top-bar { background: #444; color: white; padding: 8px; display: flex; align-items: center; justify-content: space-between; }
+  .top-bar input[type="text"] { width: 200px; padding: 6px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+
+const { useState } = React;
+
+ const genres = {
+      Fiction: {
+        Fantasy: ['Harry Potter', 'The Hobbit', 'Eragon', 'Mistborn'],
+        Romance: ['Pride and Prejudice', 'Twilight', 'The Notebook', 'Me Before You'],
+        Mystery: ['Gone Girl', 'Sherlock Holmes', 'Big Little Lies', 'The Girl with the Dragon Tattoo', 'The Da Vinci Code', 'The Silent Patient'],
+        Thriller: ['The Girl on the Train', 'Before I Go to Sleep', 'The Reversal', 'Dark Places']
+      },
+      NonFiction: {
+        Cookbook: ['Salt Fat Acid Heat', 'Joy of Cooking', 'The Food Lab', 'Ottolenghi Simple'],
+        History: ['Sapiens', 'Guns Germs and Steel', 'The Silk Roads', 'A People\'s History'],
+        Biography: ['Steve Jobs', 'Becoming', 'The Wright Brothers', 'Einstein'],
+        Autobiography: ['Long Walk to Freedom', 'Educated', 'The Diary of Anne Frank', 'I Am Malala']
+      }
+    };
+
+const bookImages = {
+  'Harry Potter': 'https://covers.openlibrary.org/b/id/7984916-L.jpg',
+  'The Hobbit': 'https://covers.openlibrary.org/b/id/6979861-L.jpg',
+  'Eragon': 'https://covers.openlibrary.org/b/id/7853721-L.jpg',
+  'Mistborn': 'https://covers.openlibrary.org/b/id/8378583-L.jpg',
+  'Pride and Prejudice': 'https://covers.openlibrary.org/b/id/8226191-L.jpg',
+  'Twilight': 'https://covers.openlibrary.org/b/id/6979863-L.jpg',
+  'The Notebook': 'https://covers.openlibrary.org/b/id/8225260-L.jpg',
+  'Me Before You': 'https://covers.openlibrary.org/b/id/8329098-L.jpg',
+  'Gone Girl': 'https://covers.openlibrary.org/b/id/8279256-L.jpg',
+  'Sherlock Holmes': 'https://covers.openlibrary.org/b/id/8231856-L.jpg',
+  'Big Little Lies': 'https://covers.openlibrary.org/b/id/8376402-L.jpg',
+  'The Girl with the Dragon Tattoo': 'https://covers.openlibrary.org/b/id/8234205-L.jpg',
+  'The Da Vinci Code': 'https://covers.openlibrary.org/b/id/8311586-L.jpg',
+  'The Silent Patient': 'https://covers.openlibrary.org/b/id/10563946-L.jpg',
+  'The Girl on the Train': 'https://covers.openlibrary.org/b/id/8231992-L.jpg',
+  'Before I Go to Sleep': 'https://covers.openlibrary.org/b/id/8383831-L.jpg',
+  'The Reversal': 'https://covers.openlibrary.org/b/id/7944916-L.jpg',
+  'Dark Places': 'https://covers.openlibrary.org/b/id/8024986-L.jpg',
+  'Salt Fat Acid Heat': 'https://covers.openlibrary.org/b/id/8941478-L.jpg',
+  'Joy of Cooking': 'https://covers.openlibrary.org/b/id/8341305-L.jpg',
+  'The Food Lab': 'https://covers.openlibrary.org/b/id/9317801-L.jpg',
+  'Ottolenghi Simple': 'https://covers.openlibrary.org/b/id/9461985-L.jpg',
+  'Sapiens': 'https://covers.openlibrary.org/b/id/8315045-L.jpg',
+  'Guns Germs and Steel': 'https://covers.openlibrary.org/b/id/8232306-L.jpg',
+  'The Silk Roads': 'https://covers.openlibrary.org/b/id/9497366-L.jpg',
+  "A People's History": 'https://covers.openlibrary.org/b/id/8234401-L.jpg',
+  'Steve Jobs': 'https://covers.openlibrary.org/b/id/7321247-L.jpg',
+  'Becoming': 'https://covers.openlibrary.org/b/id/9255851-L.jpg',
+  'The Wright Brothers': 'https://covers.openlibrary.org/b/id/8273555-L.jpg',
+  'Einstein': 'https://covers.openlibrary.org/b/id/8135548-L.jpg',
+  'Long Walk to Freedom': 'https://covers.openlibrary.org/b/id/8306667-L.jpg',
+  'Educated': 'https://covers.openlibrary.org/b/id/9351117-L.jpg',
+  'The Diary of Anne Frank': 'https://covers.openlibrary.org/b/id/8225639-L.jpg',
+  'I Am Malala': 'https://covers.openlibrary.org/b/id/8364577-L.jpg'
+};
+
+const bookPrices = {
+  'Harry Potter': 10.99, 'The Hobbit': 9.99, 'Eragon': 8.99, 'Mistborn': 12.99,
+  'Pride and Prejudice': 7.99, 'Twilight': 6.99, 'The Notebook': 8.49, 'Me Before You': 7.49,
+  'Gone Girl': 9.49, 'Sherlock Holmes': 5.99, 'Big Little Lies': 10.99,
+  'The Girl with the Dragon Tattoo': 11.49, 'The Da Vinci Code': 10.49, 'The Silent Patient': 13.99,
+  'The Girl on the Train': 8.99, 'Before I Go to Sleep': 9.99, 'The Reversal': 7.99, 'Dark Places': 8.49,
+  'Salt Fat Acid Heat': 25.99, 'Joy of Cooking': 35.99, 'The Food Lab': 40.00, 'Ottolenghi Simple': 27.99,
+  'Sapiens': 15.99, 'Guns Germs and Steel': 14.49, 'The Silk Roads': 18.99, "A People's History": 13.99,
+  'Steve Jobs': 16.99, 'Becoming': 19.99, 'The Wright Brothers': 13.49, 'Einstein': 11.49,
+  'Long Walk to Freedom': 9.99, 'Educated': 11.99, 'The Diary of Anne Frank': 10.99, 'I Am Malala': 12.49
+};
+
+const allBooks = Object.values(genres).flatMap(category => Object.values(category).flat());
+
+function App() {
+  const [user, setUser] = useState(null);
+  const [isSignup, setIsSignup] = useState(false);
+  const [category, setCategory] = useState(null);
+  const [subCategory, setSubCategory] = useState(null);
+  const [cart, setCart] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
+  const [showPayment, setShowPayment] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+  const [paymentDetails, setPaymentDetails] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [address, setAddress] = useState("");
+
+  const nearbyStores = [
+    { name: 'SSS Bookstore ', location: 'Jayanagar' },
+    { name: 'Pearl Bookstore', location: 'Koramangala' },
+    { name: 'Dust Bookstore', location: 'Banashankari' }
+  ];
+
+  const handleLoginSignup = (e) => {
+    e.preventDefault();
+    const username = e.target.username.value;
+    setUser(username);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setCategory(null);
+    setSubCategory(null);
+    setCart([]);
+    setWishlist([]);
+    setShowPayment(false);
+    setSelectedPaymentMethod("");
+    setPaymentDetails({});
+    setAddress("");
+  };
+
+  const addToCart = (book) => setCart([...cart, book]);
+  const addToWishlist = (book) => !wishlist.includes(book) && setWishlist([...wishlist, book]);
+  const handlePlaceOrder = () => setShowPayment(true);
+  const handlePaymentSuccess = (e) => {
+    e.preventDefault();
+    alert(`Payment via ${selectedPaymentMethod} Successful!\nDelivery Address:\n${address}`);
+    setCart([]);
+    setShowPayment(false);
+    setSelectedPaymentMethod("");
+    setPaymentDetails({});
+    setAddress("");
+  };
+
+  const filteredBooks = (subCategory ? genres[category][subCategory] : allBooks).filter(book =>
+    book.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const renderPaymentFields = () => {
+    if (selectedPaymentMethod === "UPI") {
+      return <input type="text" placeholder="UPI ID" required onChange={e => setPaymentDetails({ ...paymentDetails, upi: e.target.value })} />;
+    } else if (selectedPaymentMethod === "Credit Card" || selectedPaymentMethod === "Debit Card") {
+      return (
+        <>
+          <input type="text" placeholder="Card Number" required onChange={e => setPaymentDetails({ ...paymentDetails, card: e.target.value })} />
+          <input type="text" placeholder="Expiry MM/YY" required onChange={e => setPaymentDetails({ ...paymentDetails, expiry: e.target.value })} />
+          <input type="number" placeholder="CVV" required onChange={e => setPaymentDetails({ ...paymentDetails, cvv: e.target.value })} />
+        </>
+      );
+    }
+    return null;
+
+
+  };
+
+  return (
+    <div>
+      <header><h1>WHITE PETAL ONLINE BOOKSTORE</h1></header>
+
+      {user && (
+        <div className="top-bar">
+          <div>Welcome, {user}!</div>
+          <input type="text" placeholder="Search books..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+      )}
+
+      <div className="container">
+        {!user ? (
+          <div className="login-container">
+            <form className="login-box" onSubmit={handleLoginSignup}>
+              <h2>{isSignup ? "Sign Up" : "Login"}</h2>
+              <input type="text" name="username" placeholder="Username" required />
+              <input type="password" name="password" placeholder="Password" required />
+              <button type="submit">{isSignup ? "Sign Up" : "Login"}</button>
+              <p style={{ marginTop: '10px' }}>
+                {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
+                <button type="button" onClick={() => setIsSignup(!isSignup)}>
+                  {isSignup ? "Login" : "Sign Up"}
+                </button>
+              </p>
+            </form>
+          </div>
+        ) : (
+          <>
+            <nav>
+              <button onClick={() => { setCategory('Fiction'); setSubCategory(null); }}>Fiction</button>
+              <button onClick={() => { setCategory('NonFiction'); setSubCategory(null); }}>Non-Fiction</button>
+              <button onClick={() => { setCategory(null); setSubCategory(null); }}>All Books</button>
+              <button onClick={() => alert("Nearby Stores:\n" + nearbyStores.map(s => `${s.name} - ${s.location}`).join('\n'))}>Nearby Stores</button>
+            </nav>
+
+            {category && (
+              <div className="subcat-buttons">
+                {Object.keys(genres[category]).map(sub =>
+                  <button key={sub} onClick={() => setSubCategory(sub)}>{sub}</button>
+                )}
+              </div>
+            )}
+
+            <div className="books-row">
+              {filteredBooks.map(book => (
+                <div key={book} className="book">
+                  <img src={bookImages[book]} alt={book} />
+                  <h4>{book}</h4>
+                  <p>₹{bookPrices[book]}</p>
+                  <button onClick={() => addToCart(book)}>Add to Cart</button>
+                  <button onClick={() => addToWishlist(book)}>Wishlist</button>
+                </div>
+              ))}
+            </div>
+
+            <div className="section">
+              <h3>Cart</h3>
+              {cart.length === 0 ? <p>No items in cart.</p> : (
+                <>
+                  {cart.map((book, i) => <div key={i}>{book} - ₹{bookPrices[book]}</div>)}
+                  <p><b>Total: ₹{cart.reduce((sum, book) => sum + bookPrices[book], 0).toFixed(2)}</b></p>
+                  <button onClick={handlePlaceOrder}>Place Order</button>
+                </>
+              )}
+            </div>
+
+            <div className="section">
+              <h3>Wishlist</h3>
+              {wishlist.length === 0 ? <p>No items in wishlist.</p> : wishlist.map((book, i) => <div key={i}>{book}</div>)}
+            </div>
+
+            {showPayment && (
+              <div className="section">
+                <h3>Enter Delivery Address</h3>
+                <textarea rows="3" placeholder="Enter your full address here..." required
+                  value={address} onChange={e => setAddress(e.target.value)}
+                  style={{ width: '100%', padding: '8px', marginBottom: '10px', borderRadius: '4px', border: '1px solid #ccc' }} />
+
+                <h3>Select Payment Method</h3>
+                <select value={selectedPaymentMethod} onChange={e => setSelectedPaymentMethod(e.target.value)}>
+                  <option value="">--Choose Payment Method--</option>
+                  <option value="UPI">UPI</option>
+                  <option value="Credit Card">Credit Card</option>
+                  <option value="Debit Card">Debit Card</option>
+                </select>
+
+                {renderPaymentFields()}
+
+                <button onClick={handlePaymentSuccess} disabled={!selectedPaymentMethod || !address}>Pay Now</button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      <footer><p>&copy; 2025 WHITE PETAL BOOKSTORE</p></footer>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
